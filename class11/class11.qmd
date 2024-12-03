@@ -1,0 +1,107 @@
+---
+title: "Class 11: Protein Structure Prediction with AlphaFold"
+author: "Noel Lim (PID: A17652474)"
+format: pdf
+---
+
+> Q10. Which of the packages above is found only on BioConductor and not CRAN? 
+
+MSA Package
+
+> Q11. Which of the above packages is not found on BioConductor or CRAN?:
+
+
+
+> Q12. T/F? Functions from the devtools package can be used to install packages from GitHub and BitBucket?
+
+True
+
+```{r}
+library("bio3d")
+library("devtools")
+library("BiocManager")
+aa <- get.seq("1ake_A")
+aa
+```
+
+
+> Q13. How many amino acids are in this sequence, i.e. how long is this sequence?
+
+
+## Search PDB database for related sequences
+```{r}
+# b <- blast.pdb(aa)
+```
+
+```{r}
+# hits <- plot(b)
+```
+
+```{r}
+# head(hits$pdb.id)
+```
+
+```{r}
+hits <- NULL
+hits$pdb.id <- c('1AKE_A','6S36_A','6RZE_A','3HPR_A','1E4V_A','5EJE_A','1E4Y_A','3X2S_A','6HAP_A','6HAM_A','4K46_A','3GMT_A','4PZL_A')
+```
+## Download related structures
+```{r}
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+```
+ 
+```{r}
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+```{r}
+ids <- basename.pdb(pdbs$id)
+```
+
+```{r}
+#plot(pdbs, labels=ids)
+```
+
+```{r}
+anno <- pdb.annotate(ids)
+unique(anno$source)
+anno
+```
+## Performing PCA
+```{r}
+pc.xray <- pca(pdbs)
+#plot(pc.xray, pc.axes = c(1,2))
+```
+
+```{r}
+rd <- rmsd(pdbs)
+```
+
+```{r}
+hc.rd <- hclust(dist(rd))
+grps.rd <- cutree(hc.rd, k=3)
+
+#plot(pc.xray, 1:2, col="grey50", bg=grps.rd, pch=21, cex=1)
+```
+## Visualize first principal component
+```{r}
+pc1 <- mktrj(pc.xray, pc=1, file="pc_1.pdb")
+```
+## Plotting results with ggplot2
+```{r}
+library(ggplot2)
+library(ggrepel)
+
+df <- data.frame(PC1=pc.xray$z[,1], 
+                 PC2=pc.xray$z[,2], 
+                 col=as.factor(grps.rd),
+                 ids=ids)
+
+p <- ggplot(df) + 
+  aes(PC1, PC2, col=col, label=ids) +
+  geom_point(size=2) +
+  geom_text_repel(max.overlaps = 20) +
+  theme(legend.position = "none")
+p
+```
+

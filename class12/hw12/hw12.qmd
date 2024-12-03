@@ -1,0 +1,35 @@
+---
+title: "hw12"
+author: "Noel Lim (PID: A17652474)"
+format: pdf
+---
+
+```{r}
+data <- read.table("data.txt")
+```
+
+# Question 13
+```{r}
+table(data$geno)
+```
+
+```{r}
+library(ggplot2)
+ggplot(data) + aes(x=geno, y=exp) + geom_boxplot()
+```
+
+
+```{r}
+AA <- subset(data, geno=="A/A")
+AG <- subset(data, geno=="A/G")
+GG <- subset(data, geno=="G/G")
+```
+
+```{r}
+median(AA$exp)
+median(AG$exp)
+median(GG$exp)
+```
+
+# Question 14
+AA has higher expression than GG but the error bars overlap, therefore these two groups are not statistically different so SNP does not have an effect on expression of ORMDL3
