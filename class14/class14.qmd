@@ -1,0 +1,199 @@
+---
+title: "Class 14"
+author: "Noel Lim (PID: A177652474)"
+format: pdf
+---
+## Background
+Today we will complete an RNASeq analysis from counts to pathways.
+
+We will work with data on differential analysis of lung fibroblasts in response to loss of the developmental transcription factor HOXA1.
+
+## Data Import
+
+```{r}
+counts <- read.csv("GSE37704_featurecounts.csv", row.names = 1)
+metadata <- read.csv("GSE37704_metadata.csv")
+```
+
+A wee peak
+```{r}
+head(metadata)
+```
+Check correspondence of the columns of `counts` and the rows of `metadata`
+
+```{r}
+colnames(counts)
+```
+
+```{r}
+metadata$id
+```
+
+We need to remove the first "length" column from our `counts`
+
+```{r}
+countData <- counts[,-1]
+colnames(countData) == metadata$id
+```
+
+> Q. How many genes do we have?
+
+```{r}
+nrow(countData)
+```
+
+## DESeq Setup
+
+```{r}
+#| message: false
+library(DESeq2)
+```
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData = countData,
+                              colData = metadata,
+                              design = ~condition)
+```
+                          
+
+## DESeq Analysis
+
+```{r}
+dds <- DESeq(dds)
+res <- results(dds)
+```
+
+And a wee peak:
+```{r}
+head(res)
+```
+
+## Result visualization
+
+```{r}
+plot(res$log2FoldChange, -log(res$padj))
+```
+
+Add some color
+
+```{r}
+mycols <- rep("gray", nrow(res))
+mycols[abs(res$log2FoldChange) > 2] <- "red"
+res$padj
+
+plot(res$log2FoldChange, -log(res$padj), col=mycols)
+abline(v=c(-2,2), col="gray")
+abline(h=-log(0.005), col="gray")
+```
+
+## Add Annotation
+
+```{r}
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+
+columns(org.Hs.eg.db)
+```
+
+```{r}
+res$symbol <- mapIds(org.Hs.eg.db,
+                     keys=rownames(res),
+                     keytype = "ENSEMBL",
+                     column = "SYMBOL")
+res$entrez = mapIds(org.Hs.eg.db,
+                    keys=row.names(res),
+                    keytype="ENSEMBL",
+                    column="ENTREZID")
+
+res$name =   mapIds(org.Hs.eg.db,
+                    keys=row.names(res),
+                    keytype="ENSEMBL",
+                    column="ENTREZID")
+
+head(res, 10)
+```
+
+## Pathway Analysis
+```{r}
+library(gage)
+library(gageData)
+library(pathview)
+```
+
+```{r}
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+```
+
+```{r}
+foldchanges = res$log2FoldChange
+names(foldchanges) = res$entrez
+head(foldchanges)
+```
+
+```{r}
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+
+attributes(keggres)
+```
+
+```{r}
+head(keggres$less, 3)
+```
+
+```{r}
+head(keggres$greater, 3)
+```
+
+Generate pathway figures
+```{r}
+pathview(gene.data=foldchanges, 
+pathway.id = "hsa04110")
+pathview(gene.data=foldchanges, 
+pathway.id = "hsa03030")
+```
+
+![](hsa04110.pathview.png)
+![](hsa03030.pathview.png)
+
+```{r}
+nrow(countData)
+nrow(res)
+```
+
+# Gene Ontology
+
+```{r}
+data(go.sets.hs)
+data(go.subs.hs)
+
+# Focus on Biological Process subset of GO
+gobpsets = go.sets.hs[go.subs.hs$BP]
+
+gobpres = gage(foldchanges, gsets=gobpsets, same.dir=TRUE)
+```
+
+```{r}
+head(gobpres$less)
+```
+
+# Reactome Analysis
+```{r}
+sig_genes <- res[res$padj <= 0.05 & !is.na(res$padj), "symbol"]
+print(paste("Total number of significant genes:", length(sig_genes)))
+```
+
+```{r}
+write.table(sig_genes, file="significant_genes.txt", row.names=FALSE, col.names=FALSE, quote=FALSE)
+```
+
+> Q. What pathway has the most significant “Entities p-value”? Do the most significant pathways listed match your previous KEGG results? What factors could cause differences between the two methods?
+
+Most significant pathway is cell cycle (mitotic), they are slightly different from KEGG results (more specific)
+
+## Save Results
+
+```{r}
+write.csv(res, file="myresults.csv")
+```
+
