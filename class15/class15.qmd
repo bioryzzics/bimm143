@@ -1,7 +1,7 @@
 ---
 title: "Class 15: Pertussis mini-project"
 author: "Noel Lim (PID: A17652474)"
-format: pdf
+format: gfm
 
 ---
 
