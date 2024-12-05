@@ -1,7 +1,7 @@
 ---
 title: "Class 10: Halloween Candy Project"
 author: "Noel Lim (PID: A17652474)"
-format: html
+format: gfm
 ---
 
 Today is Halloween, an ole Irish holiday, let's celebrate by eating candy.
