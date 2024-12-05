@@ -1,7 +1,7 @@
 ---
 title: "Class 13: RNASeq with DESeq2"
 author: "Noel Lim (PID: A17652474)"
-format: pdf
+format: gfm
 ---
 
 Today we wil analyze some RNASeq data from Himes et al. on the effects of dexamrthasone (dex), a synthetic glucocorticoid steroid on air smooth muscle cells (ASM).
