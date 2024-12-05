@@ -1,7 +1,7 @@
 ---
 title: "Class 8: PCA Mini Project"
 author: "Noel Lim (PID:A17652474)"
-format: pdf
+format: gfm
 ---
 
 It is important to consider scaling your data before analysis such as PCA
