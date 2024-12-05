@@ -1,7 +1,7 @@
 ---
 title: "Class 5: Data Viz with ggplot"
 author: "Noel Lim PID: A17652474"
-format: pdf
+format: gfm
 ---
 
 ## Plotting in R
