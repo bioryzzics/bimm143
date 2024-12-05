@@ -1,4 +1,4 @@
-# bimm143
+# BIMM143: Bioinformatics Laboratory
 Classwork for [BIMM143 F24](https://bioboot.github.io/bimm143_F24/) at UC San Diego.
 
 - Class 5 [**Data viz with ggplot**](https://github.com/bioryzzics/bimm143/blob/main/class05/class05.md)
