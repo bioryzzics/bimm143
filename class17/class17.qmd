@@ -1,7 +1,7 @@
 ---
 title: "Class 17: Analyzing Sequence Data In the Cloud Downsteam Analysis"
 author: "Noel Lim (PID: A17652474)"
-format: pdf
+format: gfm
 ---
 
 ```{r}
