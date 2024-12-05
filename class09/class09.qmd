@@ -1,7 +1,7 @@
 ---
 title: "Class 9: Structural Bioinformatics pt.1"
 author: "Noel Lim (PID: A17652474)"
-format: pdf
+format: gfm
 ---
 
 The main database for structural data is called the PBD (Protein Data Bank). Let's see what it contains:
