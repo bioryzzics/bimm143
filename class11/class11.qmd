@@ -1,7 +1,7 @@
 ---
 title: "Class 11: Protein Structure Prediction with AlphaFold"
 author: "Noel Lim (PID: A17652474)"
-format: pdf
+format: gfm
 ---
 
 > Q10. Which of the packages above is found only on BioConductor and not CRAN? 
